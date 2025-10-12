@@ -10,6 +10,10 @@ const OverviewChart = () => {
       name: 'Orders',
       type: 'line',
       data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
+    },{
+      name: 'Revenue3',
+      type: 'area',
+      data: [30, 45, 40, 55, 60, 65, 70, 85, 78, 82, 88, 95]
     }],
     chart: {
       height: 369,

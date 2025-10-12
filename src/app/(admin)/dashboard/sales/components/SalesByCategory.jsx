@@ -40,8 +40,8 @@ const SalesByCategory = () => {
         }
       }
     },
-    series: [140, 125, 85, 60],
-    labels: ['Electronics', 'Grocery', 'Clothing', 'Other'],
+    series: [85, 60],
+    labels: ['Paying', 'Free'],
     colors: ['#f9b931', '#ff86c8', '#4ecac2', '#7f56da'],
     dataLabels: {
       enabled: false
@@ -70,14 +70,14 @@ const SalesByCategory = () => {
           <Table borderless size="sm" className="table-nowrap table-centered mb-0">
             <thead className="bg-light bg-opacity-50 thead-sm">
               <tr>
-                <th className="py-1">Category</th>
-                <th className="py-1">Orders</th>
-                <th className="py-1">Perc.</th>
+                <th className="py-1">Mockups</th>
+                <th className="py-1"></th>
+                <th className="py-1"></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>Grocery</td>
+                <td>T-shirt</td>
                 <td>187,232</td>
                 <td>
                   48.63%&nbsp;
@@ -85,7 +85,7 @@ const SalesByCategory = () => {
                 </td>
               </tr>
               <tr>
-                <td>Electonics</td>
+                <td>Hoodie</td>
                 <td>126,874</td>
                 <td>
                   36.08%&nbsp;

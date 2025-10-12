@@ -7,7 +7,7 @@ export const stateData = [{
   icon: 'iconamoon:shopping-card-add-duotone',
   iconColor: 'info',
   amount: '59.6',
-  title: 'Total Sales',
+  title: 'MMR',
   change: '8.72',
   changeColor: 'success',
   badgeIcon: 'bx:doughnut-chart'
@@ -15,7 +15,7 @@ export const stateData = [{
   icon: 'iconamoon:link-external-duotone',
   iconColor: 'success',
   amount: '24.03',
-  title: 'Total Expenses',
+  title: 'ARR',
   change: '3.28',
   changeColor: 'danger',
   badgeIcon: 'bx:bar-chart-alt-2'
@@ -23,7 +23,7 @@ export const stateData = [{
   icon: 'iconamoon:store-duotone',
   iconColor: 'purple',
   amount: '48.7',
-  title: 'Investments',
+  title: 'ACTIVE USERS',
   change: '5.69',
   changeColor: 'danger',
   badgeIcon: 'bx:building-house'
@@ -31,7 +31,7 @@ export const stateData = [{
   icon: 'iconamoon:gift-duotone',
   iconColor: 'orange',
   amount: '11.3',
-  title: 'Profit',
+  title: 'NEW INSTALLS',
   change: '10.58',
   changeColor: 'success',
   badgeIcon: 'bx:bowl-hot'
@@ -39,10 +39,18 @@ export const stateData = [{
   icon: 'iconamoon:certificate-badge-duotone',
   iconColor: 'warning',
   amount: '5.06',
-  title: 'Savings',
+  title: 'CHURN',
   change: '8.72',
   changeColor: 'success',
   badgeIcon: 'bx:cricket-ball'
+}, {
+  icon: 'iconamoon:certificate-badge-duotone',
+  iconColor: 'danger',
+  amount: '35.5',
+  title: 'LTV',
+  change: '12.45',
+  changeColor: 'success',
+  badgeIcon: 'bx:line-chart'
 }];
 export const accountData = [{
   id: '#US523',
