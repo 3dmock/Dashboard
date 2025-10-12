@@ -1,6 +1,12 @@
 import ReactApexChart from 'react-apexcharts';
 import { Button, Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap';
+import DateRangeFilter from '@/components/common/DateRangeFilter';
 const OverviewChart = () => {
+  const handleDateRangeChange = (range, startDate, endDate) => {
+    console.log('Date range changed:', { range, startDate, endDate });
+    // Here you can update the chart data based on the selected date range
+    // You might want to fetch new data from an API or filter existing data
+  };
   const chartOptions = {
     series: [{
       name: 'Revenue',
@@ -28,8 +34,8 @@ const OverviewChart = () => {
       curve: 'smooth'
     },
     fill: {
-      opacity: [1, 1],
-      type: ['gradient', 'solid'],
+      opacity: [1, 1, 0.3],
+      type: ['gradient', 'solid', 'gradient'],
       gradient: {
         type: 'vertical',
         inverseColors: false,
@@ -106,7 +112,7 @@ const OverviewChart = () => {
         borderRadius: 3
       }
     },
-    colors: ['#7f56da', '#22c55e'],
+    colors: ['#7f56da', '#22c55e', '#3b82f6'],
     tooltip: {
       shared: true,
       y: [{
@@ -129,20 +135,10 @@ const OverviewChart = () => {
   return <Card>
       <CardHeader className="d-flex justify-content-between align-items-center">
         <CardTitle>Overview</CardTitle>
-        <div className="icons-center gap-1">
-          <Button variant="soft-secondary" size="sm" type="button">
-            ALL
-          </Button>
-          <Button variant="soft-secondary" size="sm" type="button">
-            1M
-          </Button>
-          <Button variant="soft-secondary" size="sm" type="button">
-            6M
-          </Button>
-          <Button variant="soft-secondary" size="sm" type="button" active>
-            1Y
-          </Button>
-        </div>
+        <DateRangeFilter 
+          onDateRangeChange={handleDateRangeChange}
+          selectedRange="Last 30 days"
+        />
       </CardHeader>
       <CardBody>
         <div dir="ltr">
