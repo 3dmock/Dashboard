@@ -50,7 +50,7 @@ const SalesByCategory = () => {
   };
   return <Card>
       <CardHeader className="d-flex justify-content-between align-items-center">
-        <CardTitle>Sales By Category</CardTitle>
+        <CardTitle>Traffic Source</CardTitle>
         <Dropdown>
           <DropdownToggle as={'a'} role="button" className="arrow-none card-drop">
             <IconifyIcon icon="iconamoon:menu-kebab-vertical-circle-duotone" className="fs-20 align-middle text-muted" />

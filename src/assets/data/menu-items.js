@@ -21,6 +21,11 @@ export const MENU_ITEMS = [{
     label: 'Sales',
     url: '/dashboard/sales',
     parentKey: 'dashboards'
+  }, {
+    key: 'dashboard-users',
+    label: 'Users',
+    url: '/dashboard/users',
+    parentKey: 'dashboards'
   }]
 }, {
   key: 'apps',

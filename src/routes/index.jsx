@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 const Analytics = lazy(() => import('@/app/(admin)/dashboard/analytics/page'));
 const Finance = lazy(() => import('@/app/(admin)/dashboard/finance/page'));
 const Sales = lazy(() => import('@/app/(admin)/dashboard/sales/page'));
+const Users = lazy(() => import('@/app/(admin)/dashboard/users/page'));
 
 // Apps Routes
 const EcommerceProducts = lazy(() => import('@/app/(admin)/ecommerce/products/page'));
@@ -145,6 +146,10 @@ const generalRoutes = [{
   path: '/dashboard/sales',
   name: 'Sales',
   element: <Sales />
+}, {
+  path: '/dashboard/users',
+  name: 'Users',
+  element: <Users />
 }];
 const appsRoutes = [{
   name: 'Products',
