@@ -3,30 +3,15 @@ export const MENU_ITEMS = [{
   label: 'GENERAL',
   isTitle: true
 }, {
-  key: 'dashboards',
+  key: 'dashboard-sales',
   icon: 'iconamoon:home-duotone',
-  label: 'Dashboards',
-  children: [{
-    key: 'dashboard-analytics',
-    label: 'Analytics',
-    url: '/dashboard/analytics',
-    parentKey: 'dashboards'
-  }, {
-    key: 'dashboard-finance',
-    label: 'Finance',
-    url: '/dashboard/finance',
-    parentKey: 'dashboards'
-  }, {
-    key: 'dashboard-sales',
-    label: 'Sales',
-    url: '/dashboard/sales',
-    parentKey: 'dashboards'
-  }, {
-    key: 'dashboard-users',
-    label: 'Users',
-    url: '/dashboard/users',
-    parentKey: 'dashboards'
-  }]
+  label: 'Dashboard',
+  url: '/dashboard/sales'
+}, {
+  key: 'dashboard-users',
+  icon: 'iconamoon:profile-circle-duotone',
+  label: 'Users',
+  url: '/dashboard/users'
 }, {
   key: 'apps',
   label: 'APPS',
