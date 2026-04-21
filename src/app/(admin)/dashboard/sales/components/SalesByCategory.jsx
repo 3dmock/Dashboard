@@ -41,7 +41,7 @@ const SalesByCategory = () => {
         }
       }
     },
-    series: [85, 60],
+    series: [0, 0],
     labels: ['Paying', 'Free'],
     colors: ['#f9b931', '#ff86c8', '#4ecac2', '#7f56da'],
     dataLabels: {
@@ -79,26 +79,26 @@ const SalesByCategory = () => {
             <tbody>
               <tr>
                 <td>T-shirt</td>
-                <td>187,232</td>
+                <td>0</td>
                 <td>
-                  48.63%&nbsp;
-                  <span className="badge badge-soft-success ms-1">2.5% Up</span>
+                  0%&nbsp;
+                  <span className="badge badge-soft-secondary ms-1">0%</span>
                 </td>
               </tr>
               <tr>
                 <td>Hoodie</td>
-                <td>126,874</td>
+                <td>0</td>
                 <td>
-                  36.08%&nbsp;
-                  <span className="badge badge-soft-success ms-1">8.5% Up</span>
+                  0%&nbsp;
+                  <span className="badge badge-soft-secondary ms-1">0%</span>
                 </td>
               </tr>
               <tr>
                 <td>Other</td>
-                <td>90,127</td>
+                <td>0</td>
                 <td>
-                  23.41%&nbsp;
-                  <span className="badge badge-soft-danger ms-1">10.98% Down</span>
+                  0%&nbsp;
+                  <span className="badge badge-soft-secondary ms-1">0%</span>
                 </td>
               </tr>
             </tbody>

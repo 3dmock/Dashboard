@@ -1,9 +1,9 @@
 export const currency = '$';
 export const currentYear = new Date().getFullYear();
-export const developedByLink = 'https://techzaa.getappui.com/';
-export const developedBy = 'Techzaa';
-export const contactUs = 'techzaastudio@gmail.com';
+export const developedByLink = 'https://3dmock.app';
+export const developedBy = '3dmock.app';
+export const contactUs = 'hello@3dmock.app';
 export const buyLink = '';
 export const basePath = '';
-export const DEFAULT_PAGE_TITLE = 'Reback React | Responsive Admin Dashboard Template';
+export const DEFAULT_PAGE_TITLE = '3dmock Admin';
 export const colorVariants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark', 'purple', 'pink', 'orange', 'light', 'link'];

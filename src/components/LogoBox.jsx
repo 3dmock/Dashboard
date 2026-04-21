@@ -1,21 +1,27 @@
 import { Link } from 'react-router-dom';
-import logoDark from '@/assets/images/logo-dark.png';
-import logoLight from '@/assets/images/logo-light.png';
-import logoSm from '@/assets/images/logo-sm.png';
-const LogoBox = ({
-  containerClassName,
-  squareLogo,
-  textLogo
-}) => {
-  return <div className={containerClassName ?? ''}>
-      <Link to="/" className="logo-dark">
-        <img src={logoSm} className={squareLogo?.className} height={squareLogo?.height ?? 30} width={squareLogo?.width ?? 19} alt="logo sm" />
-        <img src={logoDark} className={textLogo?.className} height={textLogo?.height ?? 20} width={textLogo?.width ?? 60} alt="logo dark" />
+
+const LogoBox = ({ containerClassName, squareLogo, textLogo }) => {
+  return (
+    <div className={containerClassName ?? ''}>
+      <Link
+        to="/"
+        className="logo-dark text-decoration-none"
+        style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}
+      >
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className={squareLogo?.className}
+          style={{
+            width: 'auto',
+            height: 56,
+            maxWidth: '100%',
+            objectFit: 'contain',
+            flexShrink: 0,
+          }}
+        />
       </Link>
-      <Link to="/" className="logo-light">
-        <img src={logoSm} className={squareLogo?.className} height={squareLogo?.height ?? 30} width={squareLogo?.width ?? 19} alt="logo sm" />
-        <img src={logoLight} className={textLogo?.className} height={textLogo?.height ?? 20} width={textLogo?.width ?? 60} alt="logo light" />
-      </Link>
-    </div>;
+    </div>
+  );
 };
 export default LogoBox;

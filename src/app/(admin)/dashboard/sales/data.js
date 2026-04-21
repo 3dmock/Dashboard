@@ -6,126 +6,51 @@ import avatar6 from '@/assets/images/users/avatar-6.jpg';
 export const stateData = [{
   icon: 'iconamoon:shopping-card-add-duotone',
   iconColor: 'info',
-  amount: '59.6',
+  amount: '0',
   title: 'MMR',
-  change: '8.72',
+  change: '0',
   changeColor: 'success',
   badgeIcon: 'bx:doughnut-chart'
 }, {
   icon: 'iconamoon:link-external-duotone',
   iconColor: 'success',
-  amount: '24.03',
+  amount: '0',
   title: 'ARR',
-  change: '3.28',
+  change: '0',
   changeColor: 'danger',
   badgeIcon: 'bx:bar-chart-alt-2'
 }, {
   icon: 'iconamoon:store-duotone',
   iconColor: 'purple',
-  amount: '48.7',
+  amount: '0',
   title: 'ACTIVE USERS',
-  change: '5.69',
+  change: '0',
   changeColor: 'danger',
   badgeIcon: 'bx:building-house'
 }, {
   icon: 'iconamoon:gift-duotone',
   iconColor: 'orange',
-  amount: '11.3',
+  amount: '0',
   title: 'NEW INSTALLS',
-  change: '10.58',
+  change: '0',
   changeColor: 'success',
   badgeIcon: 'bx:bowl-hot'
 }, {
   icon: 'iconamoon:certificate-badge-duotone',
   iconColor: 'warning',
-  amount: '5.06',
+  amount: '0',
   title: 'CHURN',
-  change: '8.72',
+  change: '0',
   changeColor: 'success',
   badgeIcon: 'bx:cricket-ball'
 }, {
   icon: 'iconamoon:certificate-badge-duotone',
   iconColor: 'danger',
-  amount: '35.5',
+  amount: '0',
   title: 'LTV',
-  change: '12.45',
+  change: '0',
   changeColor: 'success',
   badgeIcon: 'bx:line-chart'
 }];
-export const accountData = [{
-  id: '#US523',
-  date: '24 April, 2024',
-  user: {
-    avatar: avatar2,
-    name: 'Dan Adrick'
-  },
-  status: 'Verified',
-  username: '@omions'
-}, {
-  id: '#US652',
-  date: '24 April, 2024',
-  user: {
-    avatar: avatar3,
-    name: 'Daniel Olsen'
-  },
-  status: 'Verified',
-  username: '@alliates'
-}, {
-  id: '#US862',
-  date: '20 April, 2024',
-  user: {
-    avatar: avatar4,
-    name: 'Jack Roldan'
-  },
-  status: 'Pending',
-  username: '@griys'
-}, {
-  id: '#US756',
-  date: '18 April, 2024',
-  user: {
-    avatar: avatar5,
-    name: 'Betty Cox'
-  },
-  status: 'Verified',
-  username: '@reffon'
-}, {
-  id: '#US420',
-  date: '18 April, 2024',
-  user: {
-    avatar: avatar6,
-    name: 'Carlos Johnson'
-  },
-  status: 'Blocked',
-  username: '@bebo'
-}];
-export const transactionsData = [{
-  id: '#98521',
-  date: '24 April, 2024',
-  amount: '120.55',
-  status: 'Cr',
-  description: 'Commisions'
-}, {
-  id: '#20158',
-  date: '24 April, 2024',
-  amount: '9.68',
-  status: 'Cr',
-  description: 'Affiliates'
-}, {
-  id: '#36589',
-  date: '20 April, 2024',
-  amount: '105.22',
-  status: 'Dr',
-  description: 'Grocery'
-}, {
-  id: '#95362',
-  date: '18 April, 2024',
-  amount: '80.59',
-  status: 'Cr',
-  description: 'Refunds'
-}, {
-  id: '#75214',
-  date: '18 April, 2024',
-  amount: '750.95',
-  status: 'Dr',
-  description: 'Bill Payments'
-}];
+export const accountData = [];
+export const transactionsData = [];

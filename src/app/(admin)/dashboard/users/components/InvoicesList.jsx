@@ -5,12 +5,10 @@ import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { currency } from '@/context/constants';
 import { getAllInvoices } from '@/helpers/data';
 const InvoicesList = () => {
-  const [allInvoices, setAllInvoices] = useState();
+  const [allInvoices, setAllInvoices] = useState([]);
   useEffect(() => {
-    (async () => {
-      const data = await getAllInvoices();
-      setAllInvoices(data);
-    })();
+    // Keep Users dashboard empty (no demo data)
+    setAllInvoices([]);
   }, []);
   return <Card>
       <CardBody>
@@ -45,7 +43,11 @@ const InvoicesList = () => {
               </tr>
             </thead>
             <tbody>
-              {allInvoices?.map((invoice, idx) => <tr key={idx}>
+              {allInvoices.length === 0 ? <tr>
+                  <td colSpan={8} className="text-center text-muted py-4">
+                    No invoices
+                  </td>
+                </tr> : allInvoices?.map((invoice, idx) => <tr key={idx}>
                   <td>
                     <Link to={`/invoices/${invoice.id}`} className="fw-medium">
                       #{invoice.id}
@@ -89,8 +91,8 @@ const InvoicesList = () => {
           <div className="col-sm">
             <div className="text-muted">
               Showing&nbsp;
-              <span className="fw-semibold">10</span>&nbsp; of&nbsp;
-              <span className="fw-semibold">52</span>&nbsp; invoices
+              <span className="fw-semibold">0</span>&nbsp; of&nbsp;
+              <span className="fw-semibold">0</span>&nbsp; invoices
             </div>
           </div>
           <Col sm="auto" className="mt-3 mt-sm-0">

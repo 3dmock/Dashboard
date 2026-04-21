@@ -11,15 +11,15 @@ const OverviewChart = () => {
     series: [{
       name: 'Visitors',
       type: 'area',
-      data: [34, 65, 46, 68, 49, 61, 42, 44, 78, 52, 63, 67]
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }, {
       name: 'Paid users',
       type: 'line',
-      data: [8, 12, 7, 17, 21, 11, 5, 9, 7, 29, 12, 35]
-    },{
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    }, {
       name: 'Churned Users',
       type: 'area',
-      data: [30, 45, 40, 55, 60, 65, 70, 85, 78, 82, 88, 95]
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     }],
     chart: {
       height: 369,

@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 
 // Dashboard Routes
+const Overview = lazy(() => import('@/app/(admin)/dashboard/overview/page'));
 const Analytics = lazy(() => import('@/app/(admin)/dashboard/analytics/page'));
 const Finance = lazy(() => import('@/app/(admin)/dashboard/finance/page'));
 const Sales = lazy(() => import('@/app/(admin)/dashboard/sales/page'));
@@ -128,13 +129,17 @@ const LockScreen2 = lazy(() => import('@/app/(other)/auth/lock-screen-2/page'));
 const initialRoutes = [{
   path: '/',
   name: 'root',
-  element: <Navigate to="/dashboard/analytics" />
+  element: <Navigate to="/dashboard/overview" />
 }, {
   path: '*',
   name: 'not-found',
   element: <NotFound />
 }];
 const generalRoutes = [{
+  path: '/dashboard/overview',
+  name: '3dmock Overview',
+  element: <Overview />
+}, {
   path: '/dashboard/analytics',
   name: 'Analytics',
   element: <Analytics />
