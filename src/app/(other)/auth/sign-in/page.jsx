@@ -2,9 +2,7 @@ import { Card, CardBody, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import LogoBox from '@/components/LogoBox';
 import PageMetaData from '@/components/PageTitle';
-import ThirdPartyAuth from '@/components/ThirdPartyAuth';
 import LoginForm from './LoginForm';
-import signInImg from '@/assets/images/sign-in.svg';
 const SignIn = () => {
   return <>
       <PageMetaData title="Sign In" />
@@ -14,7 +12,22 @@ const SignIn = () => {
           <Row className="align-items-center g-0">
             <Col lg={6} className="d-none d-lg-inline-block border-end">
               <div className="auth-page-sidebar">
-                <img src={signInImg} width={521} height={521} alt="auth" className="img-fluid" />
+                <div
+                  style={{
+                    height: '100%',
+                    minHeight: 521,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 24,
+                  }}
+                >
+                  <img
+                    src="/logo.png"
+                    alt="Logo"
+                    style={{ width: 'min(420px, 80%)', height: 'auto', objectFit: 'contain' }}
+                  />
+                </div>
               </div>
             </Col>
             <Col lg={6}>
@@ -32,8 +45,6 @@ const SignIn = () => {
                 <Row className="justify-content-center">
                   <Col xs={12} md={8}>
                     <LoginForm />
-
-                    <ThirdPartyAuth />
                   </Col>
                 </Row>
               </div>
@@ -41,12 +52,6 @@ const SignIn = () => {
           </Row>
         </CardBody>
       </Card>
-      <p className="text-white mb-0 text-center">
-        Don&apos;t have an account?
-        <Link to="/auth/sign-up" className="text-white fw-bold ms-1">
-          Sign Up
-        </Link>
-      </p>
     </>;
 };
 export default SignIn;

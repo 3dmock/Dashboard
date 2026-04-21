@@ -6,10 +6,17 @@ const LogoBox = ({ containerClassName, squareLogo, textLogo }) => {
       <Link
         to="/"
         className="logo-dark text-decoration-none"
-        style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          gap: 8,
+          marginTop: 12,
+        }}
       >
         <img
-          src="/logo.png"
+          src="/logo1.png"
           alt="Logo"
           className={squareLogo?.className}
           style={{

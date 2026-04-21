@@ -1,7 +1,6 @@
 import PasswordFormInput from '@/components/form/PasswordFormInput';
 import TextFormInput from '@/components/form/TextFormInput';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Link } from 'react-router-dom';
 import { Button, FormCheck } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -20,9 +19,6 @@ const LoginForm = () => {
       <TextFormInput control={control} name="email" containerClassName="mb-3" label="Email" id="email-id" placeholder="Enter your email" />
 
       <PasswordFormInput control={control} name="password" containerClassName="mb-3" placeholder="Enter your password" id="password-id" label={<>
-            <Link to="/auth/reset-pass" className="float-end text-muted text-unline-dashed ms-1">
-              Reset password
-            </Link>
             <label className="form-label" htmlFor="example-password">
               Password
             </label>

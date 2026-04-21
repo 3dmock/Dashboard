@@ -521,22 +521,6 @@ export const authRoutes = [{
   path: '/auth/sign-in-2',
   element: <AuthSignIn2 />
 }, {
-  name: 'Sign Up',
-  path: '/auth/sign-up',
-  element: <AuthSignUp />
-}, {
-  name: 'Sign Up 2',
-  path: '/auth/sign-up-2',
-  element: <AuthSignUp2 />
-}, {
-  name: 'Reset Password',
-  path: '/auth/reset-pass',
-  element: <ResetPassword />
-}, {
-  name: 'Reset Password 2',
-  path: '/auth/reset-pass-2',
-  element: <ResetPassword2 />
-}, {
   name: 'Lock Screen',
   path: '/auth/lock-screen',
   element: <LockScreen />
