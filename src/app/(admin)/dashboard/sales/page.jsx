@@ -45,7 +45,7 @@ const fmt = (n) => (n == null ? '0' : Number(n).toLocaleString('en-US', { maximu
 const SalesPage = () => {
   const [stats, setStats] = useState(null);
   const [revenue, setRevenue] = useState(null);
-  const [analytics, setAnalytics] = useState({ sessionsByCountry: [], sessionsByBrowser: [] });
+  const [analytics, setAnalytics] = useState({ sessionsByCountry: [], sessionsByBrowser: [], topPages: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -190,7 +190,7 @@ const SalesPage = () => {
           <SessionByBrowser browsersData={browserData} />
         </Col>
         <Col xl={6}>
-          <TopPages />
+          <TopPages pagesData={analytics.topPages.length ? analytics.topPages : undefined} />
         </Col>
       </Row>
     </>
