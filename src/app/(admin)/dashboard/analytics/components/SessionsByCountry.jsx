@@ -1,103 +1,35 @@
-import { Fragment } from 'react';
-import {
-  Card, CardBody, CardHeader, CardTitle,
-  Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
-} from 'react-bootstrap';
-import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { WorldVectorMap } from '@/components/VectorMap';
-import { countries as staticCountries } from '../data';
+import IconifyIcon from '@/components/wrappers/IconifyIcon';
+import { Fragment } from 'react';
+import { Card, CardBody, CardHeader, CardTitle, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, ProgressBar, Row } from 'react-bootstrap';
+import { countries } from '../data';
 
-const COUNTRY_COLORS = [
-  '#ac61c7', '#e76aaa', '#ea8377', '#af73a7', '#dba0d1',
-  '#f7a79a', '#fad6c0', '#ecac9f', '#b76ba8', '#7a498f',
-];
-
-const COUNTRY_ISO = {
-  Afghanistan: 'AF', Albania: 'AL', Algeria: 'DZ', Angola: 'AO',
-  Argentina: 'AR', Armenia: 'AM', Australia: 'AU', Austria: 'AT',
-  Azerbaijan: 'AZ', Bahrain: 'BH', Bangladesh: 'BD', Belarus: 'BY',
-  Belgium: 'BE', Bolivia: 'BO', Brazil: 'BR', Bulgaria: 'BG',
-  Cambodia: 'KH', Cameroon: 'CM', Canada: 'CA', Chile: 'CL',
-  China: 'CN', Colombia: 'CO', Croatia: 'HR', Cuba: 'CU',
-  'Czech Republic': 'CZ', Czechia: 'CZ', Denmark: 'DK',
-  'Dominican Republic': 'DO', Ecuador: 'EC', Egypt: 'EG',
-  Estonia: 'EE', Ethiopia: 'ET', Finland: 'FI', France: 'FR',
-  Georgia: 'GE', Germany: 'DE', Ghana: 'GH', Greece: 'GR',
-  Guatemala: 'GT', Honduras: 'HN', 'Hong Kong': 'HK', Hungary: 'HU',
-  India: 'IN', Indonesia: 'ID', Iran: 'IR', Iraq: 'IQ',
-  Ireland: 'IE', Israel: 'IL', Italy: 'IT', Japan: 'JP',
-  Jordan: 'JO', Kazakhstan: 'KZ', Kenya: 'KE', Kuwait: 'KW',
-  Latvia: 'LV', Lebanon: 'LB', Libya: 'LY', Lithuania: 'LT',
-  Malaysia: 'MY', Mexico: 'MX', Moldova: 'MD', Morocco: 'MA',
-  Mozambique: 'MZ', Myanmar: 'MM', Nepal: 'NP', Netherlands: 'NL',
-  'New Zealand': 'NZ', Nigeria: 'NG', Norway: 'NO', Oman: 'OM',
-  Pakistan: 'PK', Panama: 'PA', Peru: 'PE', Philippines: 'PH',
-  Poland: 'PL', Portugal: 'PT', Qatar: 'QA', Romania: 'RO',
-  Russia: 'RU', Rwanda: 'RW', 'Saudi Arabia': 'SA', Senegal: 'SN',
-  Serbia: 'RS', Singapore: 'SG', Slovakia: 'SK', Slovenia: 'SI',
-  'South Africa': 'ZA', 'South Korea': 'KR', Spain: 'ES',
-  'Sri Lanka': 'LK', Sudan: 'SD', Sweden: 'SE', Switzerland: 'CH',
-  Taiwan: 'TW', Tanzania: 'TZ', Thailand: 'TH', Tunisia: 'TN',
-  Turkey: 'TR', Uganda: 'UG', Ukraine: 'UA',
-  'United Arab Emirates': 'AE', 'United Kingdom': 'GB',
-  'United States': 'US', Uruguay: 'UY', Uzbekistan: 'UZ',
-  Venezuela: 'VE', Vietnam: 'VN', Yemen: 'YE', Zimbabwe: 'ZW',
-};
+const VARIANTS = ['primary', 'success', 'info', 'warning', 'danger'];
 
 const SessionsByCountry = ({ countriesData }) => {
-  const isApiData = Array.isArray(countriesData) && countriesData.length > 0;
-
-  const list = isApiData
-    ? countriesData.map((item, idx) => ({
-        ...item,
-        color: COUNTRY_COLORS[idx % COUNTRY_COLORS.length],
-      }))
-    : staticCountries;
-
-  const max = isApiData ? (list[0]?.sessions || 1) : 1;
-
-  const regionFills = {};
-  if (isApiData) {
-    for (const item of list) {
-      const code = COUNTRY_ISO[item.country];
-      if (code) regionFills[code] = item.color;
-    }
-  }
-
-  const hasRegions = Object.keys(regionFills).length > 0;
-
-  const mapOptions = {
-    zoomOnScroll: false,
+  const options = {
+    map: 'world',
+    zoomOnScroll: true,
     zoomButtons: false,
-    backgroundColor: 'transparent',
-    regionStyle: {
-      initial: {
-        fill: '#eeecf8',
-        fillOpacity: 1,
-        stroke: '#e2dff0',
-        strokeWidth: 0.3,
-      },
-      hover: { fillOpacity: 0.75 },
+    markersSelectable: true,
+    markers: [
+      { name: 'Canada', coords: [56.1304, -106.3468] },
+      { name: 'Brazil', coords: [-14.235, -51.9253] },
+      { name: 'Russia', coords: [61, 105] },
+      { name: 'China', coords: [35.8617, 104.1954] },
+      { name: 'United States', coords: [37.0902, -95.7129] },
+    ],
+    markerStyle: {
+      initial: { fill: '#7f56da' },
+      selected: { fill: '#22c55e' },
     },
-    ...(hasRegions && {
-      series: {
-        regions: [{
-          attribute: 'fill',
-          values: regionFills,
-        }],
-      },
-      onRegionTooltipShow: (e, tooltip, code) => {
-        const item = list.find((c) => COUNTRY_ISO[c.country] === code);
-        if (item) {
-          tooltip.text(tooltip.text() + ': ' + item.sessions.toLocaleString() + ' sessions');
-        }
-      },
-    }),
+    labels: { markers: { render: (marker) => marker.name } },
+    regionStyle: { initial: { fill: 'rgba(169,183,197, 0.3)', fillOpacity: 1 } },
   };
 
-  const mapKey = hasRegions
-    ? 'live-' + Object.keys(regionFills).sort().join(',')
-    : 'static';
+  const isApiData = !!countriesData;
+  const list = countriesData ?? countries;
+  const max = isApiData ? list[0]?.sessions || 1 : 1;
 
   return (
     <Card>
@@ -114,47 +46,44 @@ const SessionsByCountry = ({ countriesData }) => {
           </DropdownMenu>
         </Dropdown>
       </CardHeader>
-      <CardBody>
-        <div className="mb-2">
-          <WorldVectorMap key={mapKey} height="260px" width="100%" options={mapOptions} />
-        </div>
-
-        {list.length > 0 && (
-          <div className="pt-3 border-top">
-            {list.map((item, idx) => {
-              const pct = isApiData
-                ? Math.round((item.sessions / max) * 100)
-                : (item.value || 0);
-              return (
+      <CardBody className="py-0">
+        <Row className="align-items-center">
+          <Col lg={7}>
+            <div id="world-map-markers" className="my-3">
+              <WorldVectorMap height="300px" width="100%" options={options} />
+            </div>
+          </Col>
+          <Col lg={5} dir="ltr">
+            <div className="p-3">
+              {list.map((item, idx) => (
                 <Fragment key={idx}>
-                  <div className="d-flex justify-content-between align-items-center mb-1">
-                    <span className="fs-13">
-                      {!isApiData && item.icon && (
+                  <div className="d-flex justify-content-between align-items-center">
+                    <p className="mb-1">
+                      {!isApiData && (
                         <IconifyIcon icon={item.icon} className="fs-16 align-middle me-1" />
                       )}
-                      {isApiData ? item.country : item.name}
-                    </span>
-                    <span className="fs-13 fw-semibold text-muted">
-                      {isApiData ? item.sessions.toLocaleString() : (item.amount + 'k')}
-                    </span>
+                      <span className="align-middle">{isApiData ? item.country : item.name}</span>
+                    </p>
                   </div>
-                  <div
-                    className="progress progress-sm"
-                    style={{ height: 4, marginBottom: idx < list.length - 1 ? 12 : 0 }}
-                  >
-                    <div
-                      className="progress-bar"
-                      style={{
-                        width: pct + '%',
-                        backgroundColor: isApiData ? item.color : undefined,
-                      }}
-                    />
-                  </div>
+                  <Row className={`align-items-center ${list.length - 1 === idx ? '' : 'mb-3'}`}>
+                    <Col>
+                      <ProgressBar
+                        variant={isApiData ? VARIANTS[idx % 5] : item.variant}
+                        now={isApiData ? Math.round((item.sessions / max) * 100) : item.value}
+                        className="progress progress-soft progress-sm"
+                      />
+                    </Col>
+                    <Col xs="auto">
+                      <p className="mb-0 fs-13 fw-semibold">
+                        {isApiData ? item.sessions.toLocaleString() : `${item.amount}k`}
+                      </p>
+                    </Col>
+                  </Row>
                 </Fragment>
-              );
-            })}
-          </div>
-        )}
+              ))}
+            </div>
+          </Col>
+        </Row>
       </CardBody>
     </Card>
   );

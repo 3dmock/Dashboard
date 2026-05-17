@@ -11,8 +11,8 @@ export const MENU_ITEMS = [{
   },
   {
     key: 'dashboard-users',
-    icon: 'iconamoon:trend-up-bold',
-    label: 'Traffic',
+    icon: 'iconamoon:profile-circle-duotone',
+    label: 'Users',
     url: '/dashboard/users',
   },
 ];

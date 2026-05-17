@@ -52,7 +52,7 @@ const SalesPage = () => {
     newUsersLast12Months: [],
   });
   const [revenue, setRevenue] = useState({ mrr: 0, arr: 0, revenueHistory: [] });
-  const [analytics, setAnalytics] = useState({ sessionsByCountry: [], sessionsByBrowser: [], topPages: [], modelUsage: [] });
+  const [analytics, setAnalytics] = useState({ sessionsByCountry: [], sessionsByBrowser: [], topPages: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -157,6 +157,11 @@ const SalesPage = () => {
     ];
   }, [stats]);
 
+  const donutSeries = [
+    (stats?.planDistribution?.trial || 0) + (stats?.planDistribution?.premium || 0),
+    stats?.planDistribution?.free || 0,
+  ];
+
   const countryData = analytics?.sessionsByCountry?.length ? analytics.sessionsByCountry : undefined;
   const browserData = analytics?.sessionsByBrowser?.length ? analytics.sessionsByBrowser : undefined;
 
@@ -172,7 +177,7 @@ const SalesPage = () => {
           <OverviewChart series={areaSeries} categories={areaCategories} />
         </Col>
         <Col xxl={4} xl={4} lg={5} md={12}>
-          <SalesByCategory modelUsage={analytics.modelUsage} />
+          <SalesByCategory donutSeries={donutSeries} donutLabels={['Paying', 'Free']} />
         </Col>
       </Row>
 

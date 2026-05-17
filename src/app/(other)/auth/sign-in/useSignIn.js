@@ -1,69 +1,69 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import axios from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { useAuthContext } from '@/context/useAuthContext';
 import { useNotificationContext } from '@/context/useNotificationContext';
-import httpClient from '@/helpers/httpClient';
+
+const API_BASE = 'https://api.3dmock.app/api';
+
 const useSignIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {
-    saveSession
-  } = useAuthContext();
+  const { saveSession } = useAuthContext();
   const [searchParams] = useSearchParams();
-  const {
-    showNotification
-  } = useNotificationContext();
+  const { showNotification } = useNotificationContext();
+
   const loginFormSchema = yup.object({
     email: yup.string().email('Please enter a valid email').required('Please enter your email'),
-    password: yup.string().required('Please enter your password')
+    password: yup.string().required('Please enter your password'),
   });
-  const {
-    control,
-    handleSubmit
-  } = useForm({
+
+  const { control, handleSubmit } = useForm({
     resolver: yupResolver(loginFormSchema),
-    defaultValues: {
-      email: 'test@techzaa.com',
-      password: 'password'
-    }
+    defaultValues: { email: '', password: '' },
   });
+
   const redirectUser = () => {
     const redirectLink = searchParams.get('redirectTo');
-    if (redirectLink) navigate(redirectLink);else navigate('/');
+    if (redirectLink) navigate(redirectLink);
+    else navigate('/');
   };
-  const login = handleSubmit(async values => {
+
+  const login = handleSubmit(async (values) => {
+    setLoading(true);
     try {
-      const res = await httpClient.post('/login', values);
-      if (res.data.token) {
-        saveSession({
-          ...(res.data ?? {}),
-          token: res.data.token
-        });
-        redirectUser();
-        showNotification({
-          message: 'Successfully logged in. Redirecting....',
-          variant: 'success'
-        });
+      const res = await axios.post(`${API_BASE}/auth/login`, values, {
+        withCredentials: true,
+      });
+
+      const { token, user } = res.data;
+
+      if (!token) {
+        showNotification({ message: 'Authentication failed. No token received.', variant: 'danger' });
+        return;
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      if (!user?.isAdmin) {
+        showNotification({ message: 'Admin access required.', variant: 'danger' });
+        return;
+      }
+
+      // Save flat session so user.token is accessible everywhere
+      saveSession({ ...user, token });
+      redirectUser();
+      showNotification({ message: 'Welcome back! Redirecting...', variant: 'success' });
     } catch (e) {
-      if (e.response?.data?.error) {
-        showNotification({
-          message: e.response?.data?.error,
-          variant: 'danger'
-        });
-      }
+      const message = e.response?.data?.error ?? 'Login failed. Please try again.';
+      showNotification({ message, variant: 'danger' });
     } finally {
       setLoading(false);
     }
   });
-  return {
-    loading,
-    login,
-    control
-  };
+
+  return { loading, login, control };
 };
+
 export default useSignIn;
