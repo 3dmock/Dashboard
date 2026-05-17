@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { Badge, Card, CardBody, CardHeader, CardTitle, Col, Row, Table } from 'react-bootstrap';
+import { Card, CardBody, CardHeader, CardTitle, Col, Row, Spinner } from 'react-bootstrap';
 import PageBreadcrumb from '@/components/layout/PageBreadcrumb';
 import PageMetaData from '@/components/PageTitle';
-import OverviewChart from './components/OverviewChart';
-import SalesByCategory from './components/SalesByCategory';
-import Stats from './components/Stats';
 
 const API_BASE = 'https://api.3dmock.app/api';
 const AUTH_KEY = '_REBACK_AUTH_KEY_';
@@ -21,217 +18,143 @@ const getToken = () => {
   }
 };
 
-const getLast12Months = () => {
-  const months = [];
-  const now = new Date();
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push({
-      year: d.getFullYear(),
-      month: d.getMonth() + 1,
-      label: d.toLocaleString('default', { month: 'short' }),
-    });
-  }
-  return months;
+const SOURCE_COLORS = {
+  'Organic Search': '#ac61c7',
+  'Direct': '#e76aaa',
+  'Referral': '#ea8377',
+  'Organic Social': '#af73a7',
+  'Paid Search': '#dba0d1',
+  'Email': '#f7a79a',
+  'Paid Social': '#b76ba8',
+  'Unassigned': '#d3d3d3',
 };
 
-const LAST_12 = getLast12Months();
-
-const fmt = (n) => (n == null ? '0' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 }));
-
-const planBadge = { free: 'secondary', weekly: 'warning', monthly: 'primary' };
-const statusBadge = { active: 'success', canceled: 'danger', past_due: 'warning', trialing: 'info' };
-
-const UsersTable = ({ users }) => (
-  <Card>
-    <CardHeader className="border-bottom border-dashed">
-      <CardTitle className="mb-0">Recent Users</CardTitle>
-    </CardHeader>
-    <CardBody className="p-0">
-      <div className="table-responsive">
-        <Table className="table-centered table-nowrap mb-0 align-middle">
-          <thead className="table-light">
-            <tr>
-              <th>User</th>
-              <th>Email</th>
-              <th>Plan</th>
-              <th>Joined</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center text-muted py-4">No users yet</td>
-              </tr>
-            ) : (
-              users.map((u, idx) => (
-                <tr key={idx}>
-                  <td>
-                    <div className="d-flex align-items-center gap-2">
-                      <div
-                        className="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold"
-                        style={{ width: 32, height: 32, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                      >
-                        {(u.name || u.email || '?').charAt(0).toUpperCase()}
-                      </div>
-                      <span className="fw-medium">{u.name || '—'}</span>
-                    </div>
-                  </td>
-                  <td className="text-muted">{u.email}</td>
-                  <td>
-                    <Badge bg={planBadge[u.currentPlan] ?? 'secondary'} className="fw-medium text-capitalize">
-                      {u.currentPlan || 'free'}
-                    </Badge>
-                  </td>
-                  <td className="text-muted">
-                    {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
-                  </td>
-                  <td>
-                    <Badge
-                      bg={`${statusBadge[u.subscriptionStatus] ?? 'secondary'}-subtle`}
-                      className={`text-${statusBadge[u.subscriptionStatus] ?? 'secondary'} fw-medium text-capitalize`}
-                      style={{ fontSize: '0.75rem' }}
-                    >
-                      {u.subscriptionStatus || 'free'}
-                    </Badge>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      </div>
-    </CardBody>
-  </Card>
-);
+const DEFAULT_COLOR = '#8486a7';
 
 const UsersPage = () => {
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    newUsersThisMonth: 0,
-    planDistribution: { free: 0, trial: 0, premium: 0 },
-    activeSubscriptions: 0,
-    deactivatedAccounts: 0,
-    newUsersLast12Months: [],
-  });
-  const [users, setUsers] = useState([]);
+  const [trafficSource, setTrafficSource] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = getToken();
     if (!token) { setLoading(false); return; }
     const headers = { Authorization: `Bearer ${token}` };
-    Promise.all([
-      axios.get(`${API_BASE}/admin/stats`, { headers }),
-      axios.get(`${API_BASE}/admin/users`, { headers }),
-    ])
-      .then(([sRes, uRes]) => {
-        setStats((prev) => ({ ...prev, ...sRes.data }));
-        setUsers(uRes.data?.users || []);
+    axios.get(`${API_BASE}/admin/analytics`, { headers })
+      .then((res) => {
+        setTrafficSource(res.data?.trafficSource || []);
       })
-      .catch((err) => console.error('Users data fetch error:', err))
+      .catch((err) => console.error('Traffic source fetch error:', err))
       .finally(() => setLoading(false));
   }, []);
 
-  const paidCount = (stats?.planDistribution?.trial || 0) + (stats?.planDistribution?.premium || 0);
-  const totalPlan = ((stats?.planDistribution?.free || 0) + paidCount) || 1;
-  const conversionPct = ((paidCount / totalPlan) * 100).toFixed(1);
-
-  const statsData = [
-    {
-      icon: 'iconamoon:shopping-card-add-duotone',
-      iconColor: 'info',
-      amount: loading ? '…' : fmt(stats?.totalUsers),
-      title: 'TOTAL USERS',
-      change: '0',
-      changeColor: 'success',
-      badgeIcon: 'bx:doughnut-chart',
-      prefix: '',
-      suffix: '',
-    },
-    {
-      icon: 'iconamoon:link-external-duotone',
-      iconColor: 'success',
-      amount: loading ? '…' : fmt(stats?.planDistribution?.trial),
-      title: 'TRIAL PLAN',
-      change: '0',
-      changeColor: 'success',
-      badgeIcon: 'bx:bar-chart-alt-2',
-      prefix: '',
-      suffix: '',
-    },
-    {
-      icon: 'iconamoon:store-duotone',
-      iconColor: 'purple',
-      amount: loading ? '…' : fmt(stats?.planDistribution?.premium),
-      title: 'PREMIUM PLAN',
-      change: '0',
-      changeColor: 'success',
-      badgeIcon: 'bx:building-house',
-      prefix: '',
-      suffix: '',
-    },
-    {
-      icon: 'iconamoon:gift-duotone',
-      iconColor: 'orange',
-      amount: loading ? '…' : conversionPct,
-      title: 'CONVERSION',
-      change: '0',
-      changeColor: 'success',
-      badgeIcon: 'bx:bowl-hot',
-      prefix: '',
-      suffix: '%',
-    },
-    {
-      icon: 'iconamoon:certificate-badge-duotone',
-      iconColor: 'warning',
-      amount: loading ? '…' : fmt(stats?.deactivatedAccounts),
-      title: 'CHURNED',
-      change: '0',
-      changeColor: 'danger',
-      badgeIcon: 'bx:cricket-ball',
-      prefix: '',
-      suffix: '',
-    },
-  ];
-
-  const areaCategories = LAST_12.map((m) => m.label);
-
-  const areaSeries = useMemo(() => {
-    const lookup = {};
-    for (const item of stats?.newUsersLast12Months || []) {
-      lookup[`${item.year}-${item.month}`] = item;
-    }
-    return [
-      { name: 'Free Users', type: 'area', data: LAST_12.map((m) => lookup[`${m.year}-${m.month}`]?.free ?? 0) },
-      { name: 'Paid Users', type: 'line', data: LAST_12.map((m) => lookup[`${m.year}-${m.month}`]?.paid ?? 0) },
-    ];
-  }, [stats]);
-
-  const donutSeries = [paidCount, stats?.planDistribution?.free || 0];
+  const max = trafficSource[0]?.sessions || 1;
 
   return (
     <>
-      <PageBreadcrumb subName="Dashboards" title="Users KPI's" />
-      <PageMetaData title="Users KPI's" />
+      <PageBreadcrumb subName="Dashboards" title="Traffic Sources" />
+      <PageMetaData title="Traffic Sources" />
 
-      <Stats statsData={statsData} />
-
-      <Row>
-        <Col xxl={8} xl={8} lg={7} md={12}>
-          <OverviewChart series={areaSeries} categories={areaCategories} />
-        </Col>
-        <Col xxl={4} xl={4} lg={5} md={12}>
-          <SalesByCategory donutSeries={donutSeries} donutLabels={['Paying', 'Free']} />
-        </Col>
+      <Row className="g-3 mb-3">
+        {loading ? (
+          <Col xs={12} className="text-center py-5">
+            <Spinner />
+          </Col>
+        ) : trafficSource.length === 0 ? (
+          <Col xs={12}>
+            <Card>
+              <CardBody className="text-center text-muted py-5">
+                No traffic source data yet
+              </CardBody>
+            </Card>
+          </Col>
+        ) : (
+          trafficSource.map((item, idx) => {
+            const color = SOURCE_COLORS[item.source] ?? DEFAULT_COLOR;
+            return (
+              <Col xs={12} sm={6} xl={3} key={idx}>
+                <Card className="h-100">
+                  <CardBody>
+                    <div className="d-flex align-items-center gap-2 mb-3">
+                      <span
+                        style={{
+                          width: 10, height: 10, borderRadius: '50%',
+                          backgroundColor: color, flexShrink: 0,
+                        }}
+                      />
+                      <span className="fw-semibold text-muted fs-13">{item.source}</span>
+                    </div>
+                    <h3 className="fw-bold mb-1">{item.sessions.toLocaleString()}</h3>
+                    <p className="text-muted fs-12 mb-3">sessions</p>
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <span className="fs-12 text-muted">Share</span>
+                      <span className="fs-12 fw-semibold">{item.percentage}%</span>
+                    </div>
+                    <div className="progress" style={{ height: 6 }}>
+                      <div
+                        className="progress-bar"
+                        style={{
+                          width: `${Math.round((item.sessions / max) * 100)}%`,
+                          backgroundColor: color,
+                        }}
+                      />
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            );
+          })
+        )}
       </Row>
 
-      <Row>
-        <Col>
-          <UsersTable users={users} />
-        </Col>
-      </Row>
+      {!loading && trafficSource.length > 0 && (
+        <Row>
+          <Col xs={12}>
+            <Card>
+              <CardHeader className="border-bottom border-dashed">
+                <CardTitle className="mb-0">Traffic Breakdown</CardTitle>
+              </CardHeader>
+              <CardBody>
+                {trafficSource.map((item, idx) => {
+                  const color = SOURCE_COLORS[item.source] ?? DEFAULT_COLOR;
+                  return (
+                    <div key={idx} className={idx < trafficSource.length - 1 ? 'mb-4' : ''}>
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            style={{
+                              width: 8, height: 8, borderRadius: '50%',
+                              backgroundColor: color, flexShrink: 0,
+                            }}
+                          />
+                          <span className="fw-medium fs-13">{item.source}</span>
+                        </div>
+                        <div className="d-flex align-items-center gap-3">
+                          <span className="text-muted fs-13">{item.sessions.toLocaleString()} sessions</span>
+                          <span
+                            className="badge fw-semibold"
+                            style={{ backgroundColor: color + '22', color }}
+                          >
+                            {item.percentage}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="progress" style={{ height: 8 }}>
+                        <div
+                          className="progress-bar"
+                          style={{
+                            width: `${item.percentage}%`,
+                            backgroundColor: color,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      )}
     </>
   );
 };
