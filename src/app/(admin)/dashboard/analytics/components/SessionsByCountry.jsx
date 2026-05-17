@@ -1,11 +1,17 @@
 import { Fragment } from 'react';
 import {
   Card, CardBody, CardHeader, CardTitle, Col,
-  Dropdown, DropdownItem, DropdownMenu, DropdownToggle, ProgressBar, Row,
+  Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row,
 } from 'react-bootstrap';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { WorldVectorMap } from '@/components/VectorMap';
 import { countries as staticCountries } from '../data';
+
+// One color per country rank — shared by both the map regions and the progress bars
+const COUNTRY_COLORS = [
+  '#ac61c7', '#e76aaa', '#ea8377', '#af73a7', '#dba0d1',
+  '#f7a79a', '#fad6c0', '#ecac9f', '#b76ba8', '#7a498f',
+];
 
 // GA4 full country name → ISO-3166-1 alpha-2
 const COUNTRY_ISO = {
@@ -40,23 +46,29 @@ const COUNTRY_ISO = {
   Venezuela: 'VE', Vietnam: 'VN', Yemen: 'YE', Zimbabwe: 'ZW',
 };
 
-const VARIANTS = ['primary', 'success', 'info', 'warning', 'danger'];
-
 const SessionsByCountry = ({ countriesData }) => {
   const isApiData = !!countriesData;
-  const list = countriesData ?? staticCountries;
+
+  // Attach a per-rank color to each country entry
+  const list = isApiData
+    ? countriesData.map((item, idx) => ({
+        ...item,
+        color: COUNTRY_COLORS[idx % COUNTRY_COLORS.length],
+      }))
+    : staticCountries;
+
   const max = isApiData ? list[0]?.sessions || 1 : 1;
 
-  // Build { 'US': 30, 'MA': 169 } for jsvectormap series
-  const regionValues = {};
+  // { 'MA': '#ac61c7', 'US': '#e76aaa', ... } — direct fill colors, no scale needed
+  const regionFills = {};
   if (isApiData) {
     for (const item of list) {
       const code = COUNTRY_ISO[item.country];
-      if (code) regionValues[code] = item.sessions;
+      if (code) regionFills[code] = item.color;
     }
   }
 
-  const hasRegions = Object.keys(regionValues).length > 0;
+  const hasRegions = Object.keys(regionFills).length > 0;
 
   const mapOptions = {
     zoomOnScroll: false,
@@ -70,23 +82,22 @@ const SessionsByCountry = ({ countriesData }) => {
       series: {
         regions: [{
           attribute: 'fill',
-          scale: ['#ddc8f0', '#7c35b0'],
-          values: regionValues,
-          normalizeFunction: 'polynomial',
+          values: regionFills,
+          // No scale — string color values are applied directly to each region
         }],
       },
       onRegionTooltipShow: (e, tooltip, code) => {
-        const sessions = regionValues[code];
-        if (sessions != null) {
-          tooltip.text(`${tooltip.text()}: ${sessions.toLocaleString()} sessions`);
+        const item = list.find((c) => COUNTRY_ISO[c.country] === code);
+        if (item) {
+          tooltip.text(`${tooltip.text()}: ${item.sessions.toLocaleString()} sessions`);
         }
       },
     }),
   };
 
-  // Force remount when real data arrives so BaseVectorMap recreates with series
+  // Force BaseVectorMap to remount when live data arrives so series config is baked in
   const mapKey = hasRegions
-    ? `live-${Object.keys(regionValues).sort().join(',')}`
+    ? `live-${Object.keys(regionFills).sort().join(',')}`
     : 'empty';
 
   return (
@@ -105,12 +116,12 @@ const SessionsByCountry = ({ countriesData }) => {
         </Dropdown>
       </CardHeader>
       <CardBody>
-        {/* World map — remounts when live data arrives to apply region colors */}
+        {/* World map — regions colored to match their progress bars below */}
         <div className="mb-2">
           <WorldVectorMap key={mapKey} height="260px" width="100%" options={mapOptions} />
         </div>
 
-        {/* Horizontal bar list below the map */}
+        {/* Progress bars — same color as the map region for that country */}
         {list.length > 0 && (
           <div className="pt-3 border-top">
             {list.map((item, idx) => (
@@ -126,15 +137,15 @@ const SessionsByCountry = ({ countriesData }) => {
                     {isApiData ? item.sessions.toLocaleString() : `${item.amount}k`}
                   </span>
                 </div>
-                <Row className={`align-items-center ${idx < list.length - 1 ? 'mb-3' : ''}`}>
-                  <Col>
-                    <ProgressBar
-                      variant={isApiData ? VARIANTS[idx % 5] : item.variant}
-                      now={isApiData ? Math.round((item.sessions / max) * 100) : item.value}
-                      className="progress progress-soft progress-sm"
-                    />
-                  </Col>
-                </Row>
+                <div className={`progress progress-sm${idx < list.length - 1 ? ' mb-3' : ''}`} style={{ height: 4 }}>
+                  <div
+                    className="progress-bar"
+                    style={{
+                      width: `${isApiData ? Math.round((item.sessions / max) * 100) : item.value}%`,
+                      backgroundColor: isApiData ? item.color : undefined,
+                    }}
+                  />
+                </div>
               </Fragment>
             ))}
           </div>
