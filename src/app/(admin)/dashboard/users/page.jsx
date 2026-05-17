@@ -107,7 +107,14 @@ const UsersTable = ({ users }) => (
 );
 
 const UsersPage = () => {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    newUsersThisMonth: 0,
+    planDistribution: { free: 0, trial: 0, premium: 0 },
+    activeSubscriptions: 0,
+    deactivatedAccounts: 0,
+    newUsersLast12Months: [],
+  });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -120,20 +127,16 @@ const UsersPage = () => {
       axios.get(`${API_BASE}/admin/users`, { headers }),
     ])
       .then(([sRes, uRes]) => {
-        setStats(sRes.data);
-        setUsers(uRes.data.users || []);
+        setStats((prev) => ({ ...prev, ...sRes.data }));
+        setUsers(uRes.data?.users || []);
       })
       .catch((err) => console.error('Users data fetch error:', err))
       .finally(() => setLoading(false));
   }, []);
 
-  const paidCount = stats
-    ? (stats.planDistribution.trial || 0) + (stats.planDistribution.premium || 0)
-    : 0;
-  const totalPlan = stats
-    ? ((stats.planDistribution.free || 0) + (stats.planDistribution.trial || 0) + (stats.planDistribution.premium || 0)) || 1
-    : 1;
-  const conversionPct = stats ? ((paidCount / totalPlan) * 100).toFixed(1) : '0';
+  const paidCount = (stats?.planDistribution?.trial || 0) + (stats?.planDistribution?.premium || 0);
+  const totalPlan = ((stats?.planDistribution?.free || 0) + paidCount) || 1;
+  const conversionPct = ((paidCount / totalPlan) * 100).toFixed(1);
 
   const statsData = [
     {
@@ -196,12 +199,8 @@ const UsersPage = () => {
   const areaCategories = LAST_12.map((m) => m.label);
 
   const areaSeries = useMemo(() => {
-    if (!stats) return [
-      { name: 'Free Users', type: 'area', data: Array(12).fill(0) },
-      { name: 'Paid Users', type: 'line', data: Array(12).fill(0) },
-    ];
     const lookup = {};
-    for (const item of stats.newUsersLast12Months || []) {
+    for (const item of stats?.newUsersLast12Months || []) {
       lookup[`${item.year}-${item.month}`] = item;
     }
     return [
@@ -210,9 +209,7 @@ const UsersPage = () => {
     ];
   }, [stats]);
 
-  const donutSeries = stats
-    ? [paidCount, stats.planDistribution.free || 0]
-    : [0, 0];
+  const donutSeries = [paidCount, stats?.planDistribution?.free || 0];
 
   return (
     <>

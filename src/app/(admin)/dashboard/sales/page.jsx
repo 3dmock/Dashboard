@@ -43,8 +43,15 @@ const LAST_12 = getLast12Months();
 const fmt = (n) => (n == null ? '0' : Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 }));
 
 const SalesPage = () => {
-  const [stats, setStats] = useState(null);
-  const [revenue, setRevenue] = useState(null);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    newUsersThisMonth: 0,
+    planDistribution: { free: 0, trial: 0, premium: 0 },
+    activeSubscriptions: 0,
+    deactivatedAccounts: 0,
+    newUsersLast12Months: [],
+  });
+  const [revenue, setRevenue] = useState({ mrr: 0, arr: 0, revenueHistory: [] });
   const [analytics, setAnalytics] = useState({ sessionsByCountry: [], sessionsByBrowser: [], topPages: [] });
   const [loading, setLoading] = useState(true);
 
@@ -58,17 +65,15 @@ const SalesPage = () => {
       axios.get(`${API_BASE}/admin/analytics`, { headers }),
     ])
       .then(([sRes, rRes, aRes]) => {
-        setStats(sRes.data);
-        setRevenue(rRes.data);
-        setAnalytics(aRes.data);
+        setStats((prev) => ({ ...prev, ...sRes.data }));
+        setRevenue((prev) => ({ ...prev, ...rRes.data }));
+        setAnalytics((prev) => ({ ...prev, ...aRes.data }));
       })
       .catch((err) => console.error('Sales data fetch error:', err))
       .finally(() => setLoading(false));
   }, []);
 
-  const churnPct = stats
-    ? (((stats.deactivatedAccounts || 0) / ((stats.totalUsers + (stats.deactivatedAccounts || 0)) || 1)) * 100).toFixed(1)
-    : '0';
+  const churnPct = (((stats.deactivatedAccounts || 0) / ((stats.totalUsers + (stats.deactivatedAccounts || 0)) || 1)) * 100).toFixed(1);
 
   const statsData = [
     {
@@ -142,12 +147,8 @@ const SalesPage = () => {
   const areaCategories = LAST_12.map((m) => m.label);
 
   const areaSeries = useMemo(() => {
-    if (!stats) return [
-      { name: 'Free Users', type: 'area', data: Array(12).fill(0) },
-      { name: 'Paid Users', type: 'line', data: Array(12).fill(0) },
-    ];
     const lookup = {};
-    for (const item of stats.newUsersLast12Months || []) {
+    for (const item of stats?.newUsersLast12Months || []) {
       lookup[`${item.year}-${item.month}`] = item;
     }
     return [
@@ -156,12 +157,13 @@ const SalesPage = () => {
     ];
   }, [stats]);
 
-  const donutSeries = stats
-    ? [(stats.planDistribution.trial || 0) + (stats.planDistribution.premium || 0), stats.planDistribution.free || 0]
-    : [0, 0];
+  const donutSeries = [
+    (stats?.planDistribution?.trial || 0) + (stats?.planDistribution?.premium || 0),
+    stats?.planDistribution?.free || 0,
+  ];
 
-  const countryData = analytics.sessionsByCountry.length ? analytics.sessionsByCountry : undefined;
-  const browserData = analytics.sessionsByBrowser.length ? analytics.sessionsByBrowser : undefined;
+  const countryData = analytics?.sessionsByCountry?.length ? analytics.sessionsByCountry : undefined;
+  const browserData = analytics?.sessionsByBrowser?.length ? analytics.sessionsByBrowser : undefined;
 
   return (
     <>
@@ -190,7 +192,7 @@ const SalesPage = () => {
           <SessionByBrowser browsersData={browserData} />
         </Col>
         <Col xl={6}>
-          <TopPages pagesData={analytics.topPages.length ? analytics.topPages : undefined} />
+          <TopPages pagesData={analytics?.topPages?.length ? analytics.topPages : undefined} />
         </Col>
       </Row>
     </>
