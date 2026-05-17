@@ -1,86 +1,53 @@
-import IconifyIcon from '@/components/wrappers/IconifyIcon';
-import ReactApexChart from 'react-apexcharts';
-import { Card, CardBody, CardHeader, CardTitle, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Table } from 'react-bootstrap';
+import { Card, CardBody, CardHeader, CardTitle } from 'react-bootstrap';
 
-const SalesByCategory = ({ donutSeries, donutLabels }) => {
-  const series = donutSeries ?? [0, 0];
-  const labels = donutLabels ?? ['Paying', 'Free'];
+const MODEL_COLORS = [
+  '#7c6af7', '#f472b6', '#22c55e', '#f59e0b',
+  '#3b82f6', '#ec4899', '#10b981', '#f97316',
+];
 
-  const chartOptions = {
-    chart: { height: 250, type: 'donut' },
-    legend: {
-      show: false,
-      position: 'bottom',
-      horizontalAlign: 'center',
-      offsetX: 0,
-      offsetY: -5,
-      markers: { width: 9, height: 9, radius: 6 },
-      itemMargin: { horizontal: 10, vertical: 0 },
-    },
-    stroke: { width: 0 },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '80%',
-          labels: {
-            show: true,
-            total: { showAlways: true, show: true, label: 'All Users' },
-          },
-        },
-      },
-    },
-    labels,
-    colors: ['#f9b931', '#ff86c8', '#4ecac2', '#7f56da'],
-    dataLabels: { enabled: false },
-  };
+const SalesByCategory = ({ modelUsage }) => {
+  const list = Array.isArray(modelUsage) ? modelUsage : [];
+  const total = list.reduce((sum, m) => sum + m.views, 0) || 1;
+  const max = list[0]?.views || 1;
 
   return (
-    <Card>
-      <CardHeader className="d-flex justify-content-between align-items-center">
-        <CardTitle>Sales By Category</CardTitle>
-        <Dropdown>
-          <DropdownToggle as={'a'} role="button" className="arrow-none card-drop">
-            <IconifyIcon icon="iconamoon:menu-kebab-vertical-circle-duotone" className="fs-20 align-middle text-muted" />
-          </DropdownToggle>
-          <DropdownMenu className="dropdown-menu-end">
-            <DropdownItem href="">Sales Report</DropdownItem>
-            <DropdownItem href="">Export Report</DropdownItem>
-            <DropdownItem href="">Profit</DropdownItem>
-            <DropdownItem href="">Action</DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+    <Card className="h-100">
+      <CardHeader className="border-bottom border-dashed">
+        <CardTitle className="mb-0">Models Usage</CardTitle>
       </CardHeader>
       <CardBody>
-        <div dir="ltr">
-          <ReactApexChart height={250} options={chartOptions} series={series} type="donut" className="apex-charts" />
-        </div>
-        <div className="table-responsive mb-n1 mt-2">
-          <Table borderless size="sm" className="table-nowrap table-centered mb-0">
-            <thead className="bg-light bg-opacity-50 thead-sm">
-              <tr>
-                <th className="py-1">Plan</th>
-                <th className="py-1">Users</th>
-                <th className="py-1">Share</th>
-              </tr>
-            </thead>
-            <tbody>
-              {labels.map((label, i) => {
-                const total = series.reduce((a, b) => a + b, 0) || 1;
-                const pct = Math.round((series[i] / total) * 100);
-                return (
-                  <tr key={i}>
-                    <td>{label}</td>
-                    <td>{(series[i] || 0).toLocaleString()}</td>
-                    <td>
-                      {pct}%&nbsp;
-                      <span className="badge badge-soft-secondary ms-1">{pct}%</span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </div>
+        {list.length === 0 ? (
+          <div className="d-flex align-items-center justify-content-center h-100" style={{ minHeight: 200 }}>
+            <p className="text-muted mb-0">No model usage data yet</p>
+          </div>
+        ) : (
+          list.map((item, idx) => {
+            const pct = ((item.views / total) * 100).toFixed(1);
+            const color = MODEL_COLORS[idx % MODEL_COLORS.length];
+            return (
+              <div key={idx} className={idx < list.length - 1 ? 'mb-3' : ''}>
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <span className="fw-medium fs-13" style={{ color }}>
+                    {item.model}
+                  </span>
+                  <span className="text-muted fs-13">
+                    {item.views.toLocaleString()}&nbsp;
+                    <span className="badge badge-soft-secondary">{pct}%</span>
+                  </span>
+                </div>
+                <div className="progress progress-sm" style={{ height: 6 }}>
+                  <div
+                    className="progress-bar"
+                    style={{
+                      width: `${Math.round((item.views / max) * 100)}%`,
+                      backgroundColor: color,
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })
+        )}
       </CardBody>
     </Card>
   );
