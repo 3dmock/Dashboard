@@ -192,7 +192,7 @@ const SalesPage = () => {
           <SessionByBrowser browsersData={browserData} />
         </Col>
         <Col xl={6}>
-          <TopPages pagesData={analytics?.topPages?.length ? analytics.topPages : undefined} />
+          <TopPages pagesData={analytics.topPages} />
         </Col>
       </Row>
     </>
