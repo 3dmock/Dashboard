@@ -2,36 +2,35 @@ import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { currency } from '@/context/constants';
 import { stateData } from '../data';
 import { Card, CardBody, Col, Row } from 'react-bootstrap';
-const StatCard = ({
-  stat
-}) => {
-  const {
-    amount,
-    change,
-    changeColor,
-    badgeIcon,
-    icon,
-    iconColor,
-    title
-  } = stat;
-  return <Card>
+
+const StatCard = ({ stat }) => {
+  const { amount, change, changeColor, badgeIcon, icon, iconColor, title, prefix, suffix } = stat;
+  return (
+    <Card>
       <CardBody className="overflow-hidden position-relative">
         <IconifyIcon icon={icon} className={`fs-36 text-${iconColor}`} />
         <h3 className="mb-0 fw-bold mt-3 mb-1">
-          {currency}
-          {amount}k
+          {prefix ?? currency}{amount}{suffix ?? 'k'}
         </h3>
         <p className="text-muted">{title}</p>
         <span className={`badge fs-12 badge-soft-${changeColor}`}>{change}%</span>
         <IconifyIcon icon={badgeIcon} className="widget-icon" />
       </CardBody>
-    </Card>;
+    </Card>
+  );
 };
-const Stats = () => {
-  return <Row>
-      {stateData.map((stat, idx) => <Col lg={4} md={6} className="col-xl" key={idx}>
+
+const Stats = ({ statsData }) => {
+  const items = statsData ?? stateData;
+  return (
+    <Row>
+      {items.map((stat, idx) => (
+        <Col lg={4} md={6} className="col-xl" key={idx}>
           <StatCard stat={stat} />
-        </Col>)}
-    </Row>;
+        </Col>
+      ))}
+    </Row>
+  );
 };
+
 export default Stats;
